@@ -1,9 +1,9 @@
 #spring.application.name=big-event
 spring:
   application:
-    name: big-event
+    name: big_event
   datasource:
     url: jdbc:mysql://localhost:3306/big_event
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: 000000
+    password: "000000"
