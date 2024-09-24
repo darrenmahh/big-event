@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Pattern;
 import org.example.pojo.Result;
 import org.example.pojo.User;
 import org.example.service.UserService;
+import org.example.utils.JwtUtil;
 import org.example.utils.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -37,19 +40,20 @@ public class UserController {
     @PostMapping("/login")
     public Result login(@Pattern(regexp = "^\\S{5,16}$") String username, @Pattern(regexp = "^\\S{5,16}$")String password){
     //     根据用户名查询用户
-        User u = userService.findByUserName(username);
+        User loginUser = userService.findByUserName(username);
 
         //     判断用户是否存在
-        if(u.getId() != null){
-            if(Objects.equals(u.getPassword(), Md5Util.getMD5String(password))){
-                return Result.success("jwt 令牌");
-            } else {
-                return Result.error("密码错误");
-            }
-        } else {
-            return Result.error("用户不存在");
+       if (loginUser == null){
+           return Result.error("用户名错误");
+       }
+        //     判断密码是否正确
+        if (Md5Util.getMD5String(password).equals(loginUser.getPassword())){
+            Map<String,Object> claims = new HashMap<>();
+            claims.put("id",loginUser.getId());
+            claims.put("username",loginUser.getUsername());
+            String token = JwtUtil.genToken(claims);
+            return Result.success(token);
         }
-    //     判断密码是否正确
-
+        return Result.error("密码错误");
     }
 }
