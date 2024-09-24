@@ -29,12 +29,11 @@ public class UserController {
 
             User u = userService.findByUserName(username);
 
-            if (u == null) {
-                userService.register(username, password);
-                return Result.success();
-            } else {
-                return Result.error("用户名已被占用");
-            }
+        if (u == null) {
+            userService.register(username, password);
+            return Result.success();
+        }
+        return Result.error("用户名已被占用");
     }
 
     @PostMapping("/login")
