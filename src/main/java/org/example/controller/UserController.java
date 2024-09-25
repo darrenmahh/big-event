@@ -8,9 +8,7 @@ import org.example.utils.JwtUtil;
 import org.example.utils.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,5 +52,16 @@ public class UserController {
             return Result.success(token);
         }
         return Result.error("密码错误");
+    }
+
+    @GetMapping("/userInfo")
+    public Result<User> userInfo(@RequestHeader(name = "Authorization")String token){
+        //根据用户名获取用户信息
+        // 从token中获取用户信息
+        Map<String,Object> map =  JwtUtil.parseToken(token);
+        String username = (String) map.get("username");
+
+        User user = userService.findByUserName(username);
+        return Result.success(user);
     }
 }
