@@ -7,3 +7,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: "000000"
+mybatis:
+  configuration:
+    # 驼峰命名和数据库字段映射
+    map-underscore-to-camel-case: true

@@ -6,6 +6,7 @@ import org.example.pojo.User;
 import org.example.service.UserService;
 import org.example.utils.JwtUtil;
 import org.example.utils.Md5Util;
+import org.example.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -58,10 +59,15 @@ public class UserController {
     public Result<User> userInfo(@RequestHeader(name = "Authorization")String token){
         //根据用户名获取用户信息
         // 从token中获取用户信息
-        Map<String,Object> map =  JwtUtil.parseToken(token);
+        Map<String , Object> map = ThreadLocalUtil.get();
         String username = (String) map.get("username");
-
         User user = userService.findByUserName(username);
         return Result.success(user);
+    }
+
+    @PutMapping("/update")
+    public Result update(@RequestBody User user){
+        userService.update(user);
+        return Result.success();
     }
 }
